@@ -1,3 +1,4 @@
+// variables to manage states of yt and spotify
 let ytId, spfyId, spfyStatus, ytPaused, spfyPaused;
 let ytPlay = false;
 let spfyPlay = false;
@@ -13,27 +14,27 @@ function updateBadge() {
     });
 }
 
+// set the badge
 updateBadge();
 
+// listens for the extension button click
 browser.action.onClicked.addListener(() => {
     enabled = !enabled;
     updateBadge();
 });
 
+// receives messages from content scripts of Yt and Spotify and acts based on that.
 browser.runtime.onMessage.addListener((message, sender) => {
     if(!enabled) return;
     switch(message.type) {
         case "REGISTER_YOUTUBE":
             ytId = sender.tab.id;
             browser.tabs.sendMessage(ytId, "FIRST_PAUSE");
-            // if (message.playing) ytPlay = true;
             break;
             
         case "REGISTER_SPOTIFY":
             spfyId = sender.tab.id;
             browser.tabs.sendMessage(spfyId, "FIRST_PAUSE");
-            // if (message.playing) spfyPlay 01.
-            // = true;
             break;
 
         case "SPOTIFY_PLAYED":

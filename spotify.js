@@ -1,3 +1,4 @@
+// register spotify and attach new button
 let button = null;
 let buttonObserver = null;
 
@@ -28,6 +29,7 @@ function attachButtonObserver(newButton) {
     });
 }
 
+// get the current playing label
 function getLabel(button) {
     let label = button ? button.getAttribute("aria-label") : null;
     if(label === "Play") return false;
@@ -35,6 +37,7 @@ function getLabel(button) {
     else return null; 
 }
 
+// observes changes in the page and calls attachButtonObserver when there is a change
 const pageObserver = new MutationObserver(() => {
     const newButton = document.querySelector(
         '[data-testid="control-button-playpause"]'
@@ -50,15 +53,16 @@ pageObserver.observe(document.body, {
     subtree: true
 });
 
+// initial setup
 const initialButton = document.querySelector(
     '[data-testid="control-button-playpause"]'
 );
 
 if (initialButton) {
-    console.log("initial button:" + initialButton)
     attachButtonObserver(initialButton);
 }
 
+// listens for incoming messages
 browser.runtime.onMessage.addListener((message, sender) => {
     playing = getLabel(button);
     if(message === "FIRST_PAUSE" && playing === true){
@@ -66,8 +70,10 @@ browser.runtime.onMessage.addListener((message, sender) => {
     }
     else if(message === "PAUSE_SPOTIFY" && playing === true){
         button.click()
+        console.log("Pause")
     } 
     else if(message === "RESUME_SPOTIFY" && playing === false) {
         button.click()
+        console.log("Play")
     } 
 })
